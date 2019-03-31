@@ -8,7 +8,11 @@ import com.sucsoft.jt.acjtdview.service.builder.ExeParameter
 import com.sucsoft.jt.acjtdview.service.builder.SqlExecuteHandler
 import com.sucsoft.jt.acjtdview.util.JtDviewBeanUtils
 import com.sucsoft.jt.acjtdview.util.JtPageUtils
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.io.Serializable
+import java.util.*
 
 
 /**
@@ -21,9 +25,13 @@ class DcSqlExcute : SqlExecuteHandler {
 
     lateinit var uqs: UnsafeQueryService
 
-    lateinit var pojoDataset: PojoDataset
-
-    lateinit var ucs: UnsafeCrudService
+    /**
+     * pojo 处理类
+     */
+    @Autowired
+    private val dataset: PojoDataset? = null
+    @Autowired
+    private val crudService: UnsafeCrudService? = null
 
     override fun execute(exeParameter: ExeParameter): Any {
         return uqs.query(exeParameter.callName, exeParameter.params,exeParameter.returnClass,paramPageFirst(exeParameter),exeParameter.pageSize)
@@ -79,4 +87,43 @@ class DcSqlExcute : SqlExecuteHandler {
     }
 
 
+    /**
+     * ----------------------增删改查 ----------------------------
+     */
+
+    @Transactional(rollbackFor = [Exception::class])
+    open fun save(o: Any) {
+        dataset!!.save(o, o.javaClass.name)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    open fun save(map: Map<String, Any>, entityName: String): Serializable {
+        return crudService!!.save(map, entityName)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    open fun update(o: Any) {
+        dataset!!.update(o, o.javaClass.name)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    open fun update(id: Serializable, map: Map<String, Any>, entityName: String) {
+        crudService!!.update(id, map, entityName)
+    }
+
+
+    @Transactional(rollbackFor = [Exception::class])
+    open fun <R> delete(id: Serializable, class_z: Class<R>) {
+        dataset!!.remove(id, class_z.name)
+    }
+
+    @Transactional(readOnly = true, rollbackFor = [Exception::class])
+    open operator fun <R> get(id: Serializable, class_z: Class<R>): R {
+        return dataset!!.get(id, class_z.name, class_z)
+    }
+
+    @Transactional(readOnly = true, rollbackFor = [Exception::class])
+    open fun <R> getMap(id: Serializable, class_z: Class<R>, vararg fetches: String): Map<String, Any> {
+        return crudService!!.get(id, class_z.name, Arrays.asList(*fetches))
+    }
 }
