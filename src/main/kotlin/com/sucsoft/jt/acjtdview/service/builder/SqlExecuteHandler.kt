@@ -31,8 +31,8 @@ interface SqlExecuteHandler {
         private var pageNum: Int? = null
         private var pageSize: Int? = null
         private var returnClass: Class<*>? = null
-        private var projectName: String? = null
-        private var jsonSerialization: JsonSerialization? = null
+        private var projectName: String = ""
+//        private var jsonSerialization: JsonSerialization? = null
 
         fun type(type: ExeParameter.Type): ExeParameterBuilder {
             this.type = type
@@ -75,22 +75,24 @@ interface SqlExecuteHandler {
             return this
         }
 
-        fun paramLike(k: String, v: String, likeType: LikeType): ExeParameterBuilder {
+        fun paramLike(k: String, v: String?, likeType: LikeType): ExeParameterBuilder {
             this.params.put(k, this.getLikeRenderString(v, likeType))
             return this
         }
 
         fun getLikeRenderString(v: String?, likeType: LikeType): String? {
-            when (likeType) {
-                LikeType.Left -> return if (v == null) null else "%$v"
-                LikeType.Right -> return if (v == null) null else "$v%"
-                LikeType.Around -> return if (v == null) null else "%$v%"
-                else -> return v
+            return when (likeType) {
+                LikeType.Left -> if (v == null) null else "%$v"
+                LikeType.Right -> if (v == null) null else "$v%"
+                LikeType.Around -> if (v == null) null else "%$v%"
+                else -> v
             }
         }
 
-        fun paramLike(k: String, v: String): ExeParameterBuilder {
-            this.params.put(k, "%$v%")
+        fun paramLike(k: String, v: String?): ExeParameterBuilder {
+            if(v != null ) {
+                this.params.put(k, "%$v%")
+            }
             return this
         }
 
@@ -125,17 +127,18 @@ interface SqlExecuteHandler {
             return this
         }
 
-        fun jsonSerialization(jsonSerialization: JsonSerialization): ExeParameterBuilder {
-            this.jsonSerialization = jsonSerialization
-            return this
-        }
+//        fun jsonSerialization(jsonSerialization: JsonSerialization): ExeParameterBuilder {
+//            this.jsonSerialization = jsonSerialization
+//            return this
+//        }
 
         internal fun build(): ExeParameter {
-            return ExeParameter(this.type!!, this.callName!!, this.params, this.queryTimeOut, this.pageNum, this.pageSize, this.returnClass!!, this.projectName!!, this.jsonSerialization!!)
+            return ExeParameter(this.type!!, this.callName!!, this.params, this.queryTimeOut, this.pageNum, this.pageSize, this.returnClass!!, this.projectName)
         }
 
         fun queryExecute(): List<Map<*, *>> {
             this.type(ExeParameter.Type.Query)
+            this.returnClass = Map::class.java
             val exeParameter = this.build()
             return this.sqlExecuteHandler.query(exeParameter, Map::class.java)
         }
@@ -152,6 +155,7 @@ interface SqlExecuteHandler {
          */
         fun <T> queryExecuteObj(backClass: Class<T>): List<T> {
             this.type(ExeParameter.Type.Query)
+            this.returnClass = Map::class.java
             val exeParameter = this.build()
             var result= this.sqlExecuteHandler.query(exeParameter, exeParameter.returnClass)
             return this.sqlExecuteHandler.beanTra(result,backClass)

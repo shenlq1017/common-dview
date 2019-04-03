@@ -17,8 +17,8 @@ class JtPageUtils {
     }
 
     companion object {
-        private var default_pageNo: Int? = null
-        private var default_pageSize: Int? = null
+        private var default_pageNo: Int? = 0
+        private var default_pageSize: Int? = 0
 
         fun getDefault_pageNo(): Int? {
             return default_pageNo

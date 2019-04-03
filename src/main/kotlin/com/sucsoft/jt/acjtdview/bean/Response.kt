@@ -82,7 +82,7 @@ class Response<T> : Serializable {
             return this
         }
 
-        fun age(msg: String): ResponseBuilder<*> {
+        fun msg(msg: String): ResponseBuilder<*> {
             this.msg = msg
             return this
         }

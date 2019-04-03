@@ -85,10 +85,11 @@ class JtDviewBeanUtils {
          * @param <T> 目标泛型
          * @return 数据
         </T> */
-        fun <T> map2Bean1(map: Map<String, Any?>?, clazz: Class<T>, params: Map<String, Any>?): T? {
+        fun <T> map2Bean1(map: Map<String, Any?>?, clazz: Class<T>, params: Map<String, Any>?): T {
             var params = params
+            var obj: T = clazz.newInstance()
             if (map == null) {
-                return null
+                return obj
             }
             //初始化
             if (!funcCache.containsKey(clazz)) {
@@ -99,14 +100,20 @@ class JtDviewBeanUtils {
                 params = Maps.newHashMapWithExpectedSize(16)
             }
             val methodMap = funcCache[clazz]
-            var obj: T? = null
+
             try {
                 obj = clazz.newInstance()
 
                 for (key in map.keys) {
                     if (methodMap != null) {
-                        val method = methodMap[key.toUpperCase()]
-                        setValue(obj, if (null == params!![key]) map[key] else params[key], method!!)
+                        try {
+                            val method = methodMap[key.toUpperCase()]
+                            if(method!=null) {
+                                setValue(obj, if (null == params!![key]) map[key] else params[key], method!!)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             } catch (e: Exception) {
