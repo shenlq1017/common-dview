@@ -76,6 +76,16 @@
             <version>${swagger.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.5.22</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>1.5.22</version>
+        </dependency>
+        <dependency>
             <groupId>com.cgs</groupId>
             <artifactId>ac-commons</artifactId>
             <version>${ac.common.version}</version>

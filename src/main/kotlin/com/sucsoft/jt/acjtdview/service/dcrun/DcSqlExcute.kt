@@ -4,7 +4,6 @@ import com.cgs.dc.PojoDataset
 import com.cgs.dc.starter.model.GetOptions
 import com.cgs.dc.starter.services.UnsafeCrudService
 import com.cgs.dc.starter.services.UnsafeQueryService
-import com.cgs.sscf.commons.domain.page.PageImpl
 import com.sucsoft.jt.acjtdview.enums.ExceptionMsg
 import com.sucsoft.jt.acjtdview.exception.server.QueryError
 import com.sucsoft.jt.acjtdview.service.builder.ExeParameter
@@ -12,6 +11,8 @@ import com.sucsoft.jt.acjtdview.service.builder.SqlExecuteHandler
 import com.sucsoft.jt.acjtdview.util.JtDviewBeanUtils
 import com.sucsoft.jt.acjtdview.util.JtPageUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.io.Serializable
@@ -59,7 +60,11 @@ class DcSqlExcute : SqlExecuteHandler {
      * 分页
      */
     override fun <T> paginate(exeParameter: ExeParameter, classz: Class<T>): PageImpl<T> {
-        return PageImpl(query(exeParameter, classz),null,count(exeParameter)!!)
+        return if (exeParameter.pageNum == null || exeParameter.pageSize == null) {
+            PageImpl(query(exeParameter, classz))
+        }else {
+            PageImpl(query(exeParameter, classz), PageRequest(exeParameter.pageNum!!-1, exeParameter.pageSize!!), count(exeParameter)!!)
+        }
     }
 
     /**

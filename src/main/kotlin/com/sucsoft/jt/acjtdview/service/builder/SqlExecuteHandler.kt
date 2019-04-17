@@ -1,8 +1,9 @@
 package com.sucsoft.jt.acjtdview.service.builder
 
-import com.cgs.sscf.commons.domain.page.PageImpl
 import java.util.LinkedHashMap
 import org.apache.commons.beanutils.BeanMap
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 
 interface SqlExecuteHandler {
     fun execute(exeParameter: ExeParameter): Any
@@ -50,10 +51,9 @@ interface SqlExecuteHandler {
         }
 
         fun paramNotNull(k: String, v: Any?): ExeParameterBuilder {
-            if (v != null) {
+            if (v != null ) {
                 this.params.put(k, v)
             }
-
             return this
         }
 
@@ -71,6 +71,15 @@ interface SqlExecuteHandler {
                     this.params.put(k.toString(), v)
                 }
 
+            }
+            return this
+        }
+
+        fun paramMap(obj: Map<String,Any?>): ExeParameterBuilder {
+            obj.forEach { k, v ->
+                if (v != null) {
+                    this.params.put(k, v)
+                }
             }
             return this
         }
@@ -157,7 +166,7 @@ interface SqlExecuteHandler {
             this.type(ExeParameter.Type.Query)
             this.returnClass = Map::class.java
             val exeParameter = this.build()
-            var result= this.sqlExecuteHandler.query(exeParameter, exeParameter.returnClass)
+            val result= this.sqlExecuteHandler.query(exeParameter, exeParameter.returnClass)
             return this.sqlExecuteHandler.beanTra(result,backClass)
         }
 
@@ -215,7 +224,12 @@ interface SqlExecuteHandler {
          * 转vo分页
          */
         fun <T> paginateExecuteObj(backClass: Class<T>): PageImpl<T> {
-            return PageImpl(queryExecuteObj(backClass),null,countOperation()!!)
+            return if (this.pageNum == null && this.pageSize == null) {
+                PageImpl(queryExecuteObj(backClass))
+            }else {
+                PageImpl(queryExecuteObj(backClass), PageRequest(this.pageNum!!-1,this.pageSize!!),countOperation()!!)
+            }
+
         }
 
         fun scriptExecute(): List<List<Map<String, Any>>> {

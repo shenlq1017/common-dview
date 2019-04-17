@@ -61,6 +61,8 @@ class JtDviewBeanUtils {
                 method.invoke(instance, getDouble(value))
             } else if (parameterType == Int::class.java || parameterType == Int::class.javaPrimitiveType) {
                 method.invoke(instance, getInteger(value))
+            } else if (parameterType == Integer::class.java || parameterType == Integer::class.javaPrimitiveType) {
+                method.invoke(instance, getInteger(value))
             } else if (parameterType == Long::class.java || parameterType == Long::class.javaPrimitiveType) {
                 method.invoke(instance, gatLong(value))
             } else if (parameterType == Boolean::class.java || parameterType == Boolean::class.javaPrimitiveType) {
