@@ -2,6 +2,7 @@ package com.sucsoft.jt.acjtdview.service.builder
 
 import java.util.LinkedHashMap
 import org.apache.commons.beanutils.BeanMap
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
@@ -12,7 +13,7 @@ interface SqlExecuteHandler {
 
     fun count(exeParameter: ExeParameter): Long?
 
-    fun <T> paginate(exeParameter: ExeParameter, classz: Class<T>): PageImpl<T>
+    fun <T> paginate(exeParameter: ExeParameter, classz: Class<T>): Page<T>
 
     fun script(exeParameter: ExeParameter): List<List<Map<String, Any>>>
 
@@ -182,12 +183,14 @@ interface SqlExecuteHandler {
          * 统计总数
          */
         fun countOperation(): Long? {
+            this.returnClass = Map::class.java
             this.type(ExeParameter.Type.Count)
             val exeParameter = this.build()
             return this.sqlExecuteHandler.count(exeParameter)
         }
 
         fun singleNumExecute(): Long? {
+            this.returnClass = Map::class.java
             this.type(ExeParameter.Type.SingleNum)
             val exeParameter = this.build()
             return this.sqlExecuteHandler.count(exeParameter)
@@ -195,7 +198,7 @@ interface SqlExecuteHandler {
 
 
         @Deprecated("")
-        fun paginateExecute(): PageImpl<Map<*, *>> {
+        fun paginateExecute(): Page<Map<*, *>> {
             this.type(ExeParameter.Type.Paginate)
             val exeParameter = this.build()
             return this.sqlExecuteHandler.paginate(exeParameter, Map::class.java)
@@ -204,7 +207,7 @@ interface SqlExecuteHandler {
         /**
          * map分页
          */
-        fun paginateOperation(): PageImpl<Map<*, *>> {
+        fun paginateOperation(): Page<Map<*, *>> {
             this.type(ExeParameter.Type.Paginate)
             val exeParameter = this.build()
             return this.sqlExecuteHandler.paginate(exeParameter, Map::class.java)
@@ -213,7 +216,7 @@ interface SqlExecuteHandler {
         /**
          * 对象分页
          */
-        fun <T> paginateExecute(returnClass: Class<T>): PageImpl<T> {
+        fun <T> paginateExecute(returnClass: Class<T>): Page<T> {
             this.returnClass(returnClass)
             this.type(ExeParameter.Type.Paginate)
             val exeParameter = this.build()
@@ -223,7 +226,7 @@ interface SqlExecuteHandler {
         /**
          * 转vo分页
          */
-        fun <T> paginateExecuteObj(backClass: Class<T>): PageImpl<T> {
+        fun <T> paginateExecuteObj(backClass: Class<T>): Page<T> {
             return if (this.pageNum == null && this.pageSize == null) {
                 PageImpl(queryExecuteObj(backClass))
             }else {

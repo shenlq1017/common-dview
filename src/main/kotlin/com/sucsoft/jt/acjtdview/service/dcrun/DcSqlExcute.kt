@@ -11,6 +11,7 @@ import com.sucsoft.jt.acjtdview.service.builder.SqlExecuteHandler
 import com.sucsoft.jt.acjtdview.util.JtDviewBeanUtils
 import com.sucsoft.jt.acjtdview.util.JtPageUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
@@ -59,11 +60,11 @@ class DcSqlExcute : SqlExecuteHandler {
     /**
      * 分页
      */
-    override fun <T> paginate(exeParameter: ExeParameter, classz: Class<T>): PageImpl<T> {
+    override fun <T> paginate(exeParameter: ExeParameter, classz: Class<T>): Page<T> {
         return if (exeParameter.pageNum == null || exeParameter.pageSize == null) {
             PageImpl(query(exeParameter, classz))
         }else {
-            PageImpl(query(exeParameter, classz), PageRequest(exeParameter.pageNum!!-1, exeParameter.pageSize!!), count(exeParameter)!!)
+            PageImpl(query(exeParameter, classz), PageRequest(exeParameter.pageNum-1, exeParameter.pageSize), count(exeParameter)!!)
         }
     }
 

@@ -35,7 +35,7 @@ class HttpExceptionHandler {
 
     @ExceptionHandler(value = [BadRequest::class])
     @ResponseBody
-    @Throws(IOException::class)
+    @Throws(Exception::class)
     fun handleWarn(e: ApplicationException, response: HttpServletResponse): ResponseEntity<*> {
         val cm = CodeAndMessage(e.code(), e.message, LogLevel.WARN)
         logger.warn(e.message, e)
@@ -44,7 +44,7 @@ class HttpExceptionHandler {
 
     @ExceptionHandler(value = [CheckError::class, DataDealError::class, QueryError::class, InternalServerError::class])
     @ResponseBody
-    @Throws(IOException::class)
+    @Throws(Exception::class)
     private fun handleError(e: ApplicationException, response: HttpServletResponse): ResponseEntity<*> {
         val cm = CodeAndMessage(e.code(), e.message, LogLevel.ERROR)
         logger.error(e.message, e)
@@ -53,7 +53,7 @@ class HttpExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     @ResponseBody
-    @Throws(IOException::class)
+    @Throws(Exception::class)
     fun handleException(e: Exception): ResponseEntity<*> {
 
         var cm: CodeAndMessage? = exceptionRegistry!!.getExceptionCodeAndMessage(e)
