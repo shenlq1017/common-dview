@@ -12,6 +12,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.ApiSelectorBuilder;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -76,9 +77,10 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         Docket docket = new Docket(DocumentationType.SWAGGER_2);
+        ApiSelectorBuilder apiBuilder = docket.select();
         if (basePackages!=null && !StringUtils.isEmpty(basePackages)) {
             for (String basePackage : basePackages) {
-                docket.select().apis(RequestHandlerSelectors.basePackage(basePackage)).build();
+                apiBuilder.apis(RequestHandlerSelectors.basePackage(basePackage));
             }
         }
         /**
@@ -86,7 +88,7 @@ public class SwaggerConfig {
          */
         if (classAnnotations != null && classAnnotations.length > 0) {
             for (Class classAnnotation : classAnnotations) {
-                docket.select().apis(RequestHandlerSelectors.withClassAnnotation(classAnnotation)).build();
+                apiBuilder.apis(RequestHandlerSelectors.withClassAnnotation(classAnnotation));
             }
         }
         /**
@@ -94,47 +96,46 @@ public class SwaggerConfig {
          */
         if (methodAnnotations != null && methodAnnotations.length > 0) {
             for (Class methodAnnotation : methodAnnotations) {
-                docket.select().apis(RequestHandlerSelectors.withMethodAnnotation(methodAnnotation)).build();
+                apiBuilder.apis(RequestHandlerSelectors.withMethodAnnotation(methodAnnotation));
             }
         }
         /**
          * 所有
          */
         if (apisAny) {
-            docket.select().apis(RequestHandlerSelectors.any()).build();
+            apiBuilder.apis(RequestHandlerSelectors.any());
         }
         /**
          * 一个不要
          */
         if (apisNone) {
-            docket.select().apis(RequestHandlerSelectors.none()).build();
+            apiBuilder.apis(RequestHandlerSelectors.none());
         }
         /**
          * 正则匹配路径
          */
         if(!StringUtils.isEmpty(pathRegex)) {
-            docket.select().paths(PathSelectors.regex(pathRegex)).build();
+            apiBuilder.paths(PathSelectors.regex(pathRegex));
         }
         /**
          * 通配匹配路径
          */
         if (!StringUtils.isEmpty(pathPattern)) {
-            docket.select().paths(PathSelectors.ant(pathPattern)).build();
+            apiBuilder.paths(PathSelectors.ant(pathPattern));
         }
         /**
          * 所有路径
          */
         if (pathAny) {
-            docket.select().paths(PathSelectors.any()).build();
+            apiBuilder.paths(PathSelectors.any());
         }
         /**
          * 取消所有路径
          */
         if (pathNone) {
-            docket.select().paths(PathSelectors.none()).build();
+            apiBuilder.paths(PathSelectors.none());
         }
-        docket.apiInfo(apiInfo());
-        return docket;
+        return apiBuilder.build().apiInfo(apiInfo());
     }
 
     @Autowired
