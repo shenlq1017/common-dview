@@ -60,7 +60,7 @@ class DcSqlExcute : SqlExecuteHandler {
     /**
      * 分页
      */
-    override fun <T> paginate(exeParameter: ExeParameter, classz: Class<T>): Page<T> {
+    override fun <T> paginate(exeParameter: ExeParameter, classz: Class<T>): PageImpl<T> {
         return if (exeParameter.pageNum == null || exeParameter.pageSize == null) {
             PageImpl(query(exeParameter, classz))
         }else {
