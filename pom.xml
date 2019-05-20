@@ -19,6 +19,8 @@
         <kotlin.version>1.3.20</kotlin.version>
         <dc.client.starter.version>1.1.13</dc.client.starter.version>
         <swagger.version>2.9.2</swagger.version>
+        <swagger-bootstrap.version>1.9.3</swagger-bootstrap.version>
+        <swagger.annotations.version>1.5.22</swagger.annotations.version>
         <ac.common.version>1.0.2</ac.common.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <snakeyaml.version>1.23</snakeyaml.version>
@@ -86,6 +88,11 @@
             <version>1.5.22</version>
         </dependency>
         <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>swagger-bootstrap-ui</artifactId>
+            <version>${swagger-bootstrap.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.cgs</groupId>
             <artifactId>ac-commons</artifactId>
             <version>${ac.common.version}</version>
@@ -104,7 +111,6 @@
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
